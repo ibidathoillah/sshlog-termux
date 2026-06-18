@@ -22,8 +22,8 @@
 #ifndef SSHTRACE_EVENTS_H
 #define SSHTRACE_EVENTS_H
 
-#ifndef __clang__
-// Only include this for outside BPF code.  BPF code compiles w/ clang
+#if !defined(__bpf__) && !defined(__BPF__)
+// Only include this for outside BPF code.
 #include <stdint.h>
 #include <string>
 #endif
@@ -72,7 +72,7 @@ struct terminal_update_event {
   char terminal_data[CONNECTION_READ_BUFFER_BYTES];
   int32_t data_len;
 
-#ifndef __clang__
+#if !defined(__bpf__) && !defined(__BPF__)
   // Outside of BPF, we'll aggregate this data over a time delta
   // Need a higher limit than what the char buffer allows
   std::string aggregated_data;

@@ -22,8 +22,8 @@
 #ifndef SSHTRACE_TYPES_H
 #define SSHTRACE_TYPES_H
 
-#ifndef __clang__
-// Only include this for outside BPF code.  BPF code compiles w/ clang
+#if !defined(__bpf__) && !defined(__BPF__)
+// Only include this for outside BPF code.
 #include <stdint.h>
 #else
 // FIX: BPF (Clang) doesn't have stdint.h included, so we must define these manually.

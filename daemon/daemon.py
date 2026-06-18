@@ -105,9 +105,10 @@ def run_main():
     # Create Tracker
     session_tracker = Tracker()
 
-    # Load config files from /etc/sshlog/sshlog.yaml as well as any files in /etc/sshlog/conf.d/
-    CONF_D_DIR = '/etc/sshlog/conf.d/'
-    conf_files = ['/etc/sshlog/sshlog.yaml']
+    # Load config files from etc/sshlog/sshlog.yaml as well as any files in conf.d/
+    SSHLOG_BASE_DIR = '/data/data/com.termux/files/usr/etc/sshlog' if os.path.exists('/data/data/com.termux/files/usr/etc/sshlog') else '/etc/sshlog'
+    CONF_D_DIR = os.path.join(SSHLOG_BASE_DIR, 'conf.d/')
+    conf_files = [os.path.join(SSHLOG_BASE_DIR, 'sshlog.yaml')]
     if os.path.isdir(CONF_D_DIR):
         for conf_file in os.listdir(CONF_D_DIR):
             if conf_file.endswith('.yaml') or conf_file.endswith('.yml'):
@@ -116,7 +117,7 @@ def run_main():
     # Initialize the plugins
     plugin_manager = PluginManager(conf_files,
                                    session_tracker,
-                                   user_plugin_dirs=['/etc/sshlog/plugins/'])
+                                   user_plugin_dirs=[os.path.join(SSHLOG_BASE_DIR, 'plugins/')])
     if not plugin_manager.plugins_ok():
         for validation_error in plugin_manager.validation_errors:
             logger.warning(validation_error)

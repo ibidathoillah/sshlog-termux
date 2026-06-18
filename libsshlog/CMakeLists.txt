@@ -35,11 +35,13 @@ ExternalProject_Add(libbpf
   BUILD_COMMAND make -j$(nproc)
     BUILD_STATIC_ONLY=1
     CPPFLAGS=-fPIC
+    EXTRA_CFLAGS=-D__poll_t=unsigned
     OBJDIR=${CMAKE_CURRENT_BINARY_DIR}/libbpf/libbpf
   # Step 2: Install
   INSTALL_COMMAND make 
     BUILD_STATIC_ONLY=1
     CPPFLAGS=-fPIC
+    EXTRA_CFLAGS=-D__poll_t=unsigned
     OBJDIR=${CMAKE_CURRENT_BINARY_DIR}/libbpf/libbpf
     DESTDIR=${CMAKE_CURRENT_BINARY_DIR}/libbpf
     INCLUDEDIR=
@@ -99,7 +101,7 @@ if(USE_RINGBUF)
 endif()
 
 bpf_object(sshtrace bpf/sshtrace.bpf.c)
-add_dependencies(sshtrace_skel libbpf-build )
+add_dependencies(sshtrace_skel libbpf)
 
 set(sshlog_SRC
   sshlog.cpp
@@ -124,6 +126,10 @@ target_link_libraries(sshlog
   elf
   z
 )
+find_library(ARGP_LIB argp)
+if(ARGP_LIB)
+  target_link_libraries(sshlog PRIVATE ${ARGP_LIB})
+endif()
 target_include_directories(sshlog PRIVATE "${pfs_SOURCE_DIR}/include")
 
 
